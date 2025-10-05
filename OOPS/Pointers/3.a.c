@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+// Array of pointers
 int main()
 {
     int r,c;
