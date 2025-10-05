@@ -6,8 +6,8 @@ int main()
     printf("Enter number of rows and columns: ");
     scanf("%d %d", &rows, &cols);
 
-    int (*p)[cols];
-    p = malloc(rows*cols*sizeof(*p));
+    int (*p)[rows];
+    p = malloc(cols*sizeof(*p));
 
     for (int i = 0; i < rows; i++)
     {
