@@ -1,91 +1,157 @@
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct Stu
-{
+typedef struct student{
     int roll;
-    char name[31];
-    float score;
-    struct Stu *next;
-}Stu;
-// We have to change the head
-void create(Stu **head){
-    *head = (Stu*)malloc(sizeof(Stu));
-    if(*head == NULL) {
-        printf("Memory allocation failed!\n");
-        return;
-    }
-    (*head)->next = NULL;
+    char* name;
+    int score;
+}student;
+
+typedef struct Node{
+    student record;
+    struct Node* next;
+}Node;
+
+Node* createNode(){
+    student stu;
+
+    printf("Enter deatils of the student-> \n");
 
     printf("Enter roll: ");
-    scanf("%d",&((*head)->roll));
-    printf("\n");
+    scanf("%d", &stu.roll);
 
-    printf("Enter name: \n");
+    stu.name = (char *)malloc(33 * sizeof(char));
+    printf("Enter name (max 32 characters): ");
     getchar();
-    gets((*head)->name);
-    printf("\n");
-    
-    printf("Enter score: \n");
-    scanf("%f",&((*head)->score));
-    printf("\n");
-}
-void append(Stu *head){
-    while (head->next != NULL)
-    {
-        head = head->next;
-    }
-    Stu *p = (Stu*)malloc(sizeof(Stu));
-    // As like create there head is here p;
-    p->next = NULL;
-    printf("Enter roll: ");
-    scanf("%d",&(p->roll));
+    scanf("%[^\n]", stu.name);
+
+    printf("Enter score: ");
+    scanf("%d", &stu.score);
+
     printf("\n");
 
-    printf("Enter name: \n");
-    getchar();
-    gets(p->name);
-    printf("\n");
-    
-    printf("Enter score: \n");
-    scanf("%f",&(p->score));
-    printf("\n");
+    Node* newNode = (Node *)malloc(sizeof(Node));
 
-    p->next = NULL;
-    head->next = p;
-}
-void delete(Stu *head){
-    Stu* temp = head->next;
-    Stu* prev = head;
-    while (temp->next!=NULL)
-    {
-       temp = temp->next;
-       prev = prev->next; 
-    }
-    prev->next = NULL;
-    free(temp);
-}
-void diaplay(Stu *head){
-    while (head != NULL)
-    {
-        printf("Roll: %d\n",(head->roll));
-        printf("Name: %s\n",(head->name));
-        printf("Score: %.2f\n",(head->score));
-        head = head->next;
-    }
-    
-}
-int main()
-{
-    Stu *head = NULL;
+    newNode->record = stu;
+    newNode->next = NULL;
 
-    create(&head);
-    append(head);
-    diaplay(head);
-    printf("\n");
-    delete(head);
-    diaplay(head);
-    printf("\n");
+    return newNode;
+
+}
+
+Node* createLL(int n){
+    Node* head = createNode();
+    Node* current = head;
+
+    for (int i=1; i<n; i++){
+        current->next = createNode();
+        current = current->next;
+    }
+
+    return head;
+}
+
+void addStudent(Node* head){
+    Node* newNode = createNode();
+
+    Node* current = head;
+
+    while(current->next != NULL){
+        current = current->next;
+    }
+
+    current->next = newNode;
+}
+
+Node* deleteStudent(Node** head, int givenRoll){
+    if ((*head)->record.roll == givenRoll){
+        Node* temp = *head;
+        *head = (*head)->next;
+        free(temp);
+
+        return *head;
+    }
+
+    Node* current = *head;
+    Node* prev = NULL;
+    while(current != NULL){
+        if (current->record.roll == givenRoll){
+            prev->next = current->next;
+            free(current);
+            break;
+        }
+        prev = current;
+        current = current->next;
+    }
+
+    if (current == NULL){
+        printf("Please enter valid roll!\n");
+        return *head;
+    }
+
+    return *head;
+}
+
+void displayData(Node* head){
+    printf("The list of students is: \n");
+    Node* current = head;
+    int i = 1;
+    while(current != NULL){
+        printf("\n");
+        printf("Student %d: \n", i);
+        printf("Roll: %d\n", current->record.roll);
+        printf("Name: %s\n", current->record.name);
+        printf("Score: %d\n", current->record.score);
+        printf("\n");
+        current = current->next;
+        i++;
+    }
+}
+
+int main(){
+    int n;
+    printf("Enter number of record you want to enter: ");
+    scanf("%d", &n);
+
+    Node* LL = createLL(n);
+
+    printf("\n Enter your choice: \n");
+    int choice;
+
+    while(1){
+        printf("\
+        Enter your choice: \n\
+        0. To exit\n\
+        1. Add new record \n\
+        2. Delete given record \n\
+        3. Display data \n\
+        ");
+
+        scanf("%d", &choice);
+
+        if (choice == 0) break;
+
+        else if (choice == 1){
+            addStudent(LL);
+        }
+
+        else if (choice == 2){
+            int roll;
+            printf("Enter roll to delete: ");
+            scanf("%d", &roll);
+            LL = deleteStudent(&LL, roll);
+        }
+
+        else if (choice == 3){
+            displayData(LL);
+        }
+
+        else{
+            printf("Please enter valid choice!\n");
+        }
+    }
 
     return 0;
 }

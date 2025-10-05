@@ -10,14 +10,21 @@ typedef struct Student
     char name[31];
     float score;
 }Student;
+// scending order by roll
 int compareByRollAsc(Student a,Student b){
  return a.roll>b.roll;
 }
+// Descending order by roll
 int compareByRollDsc(Student a,Student b){
  return a.roll<b.roll;
 }
+// Ascending order by score
 int compareByScoreAsc(Student a,Student b){
  return a.score>b.score;
+}
+// Descending order by score
+int compareByScoreDsc(Student a,Student b){
+ return a.score<b.score;
 }
 void sort(Student arr[], int n,int (*cmp)(Student,Student)){
     for (int i = 0; i < n-1; i++)
@@ -38,22 +45,44 @@ void sort(Student arr[], int n,int (*cmp)(Student,Student)){
     }
     
 }
-
+// print students
+void printStudents(Student arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%s %d %.2f\n", arr[i].name, arr[i].roll, arr[i].score);
+    }
+}
 int main()
 {
-    Student arr[3];
-    for (int i = 0; i < 3; i++)
-    {
-        scanf("%s %d %f",arr[i].name,&arr[i].roll,&arr[i].score);
+    int n;
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+
+    Student arr[n];
+    printf("Enter name roll score:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%s %d %f", arr[i].name, &arr[i].roll, &arr[i].score);
     }
-    for (int i = 0; i < 3; i++)
-    {
-        printf("The structure are : %s %d %.2f\n",arr[i].name,arr[i].roll,arr[i].score);
+
+    int choice;
+    printf("\nSort by:\n");
+    printf("1. Roll Ascending\n");
+    printf("2. Roll Descending\n");
+    printf("3. Score Ascending\n");
+    printf("4. Score Descending\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1: sort(arr, n, compareByRollAsc); break;
+        case 2: sort(arr, n, compareByRollDsc); break;
+        case 3: sort(arr, n, compareByScoreAsc); break;
+        case 4: sort(arr, n, compareByScoreDsc); break;
+        default: 
+            printf("Invalid choice!\n");
+            break;
     }
-    sort(arr,3,compareByRollAsc);
-    for (int i = 0; i < 3; i++)
-    {
-        printf("The structure are after sorting : %s %d %.2f\n",arr[i].name,arr[i].roll,arr[i].score);
-    }
+
+    printf("\nSorted students:\n");
+    printStudents(arr, n);
     return 0;
 }
